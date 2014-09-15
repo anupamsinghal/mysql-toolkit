@@ -40,6 +40,7 @@ def parse_args():
    opts.port = int(opts.port)
    opts.target = int(opts.target)
    opts.slave_lag = int(opts.slave_lag)
+   opts.sleep_ms = int(opts.sleep_ms)  
    #trace ("opts: " +  str(opts))
    return opts
 
