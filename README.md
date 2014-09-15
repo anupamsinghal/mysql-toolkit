@@ -42,4 +42,3 @@ Options:
   --slave_lag=SLAVE_LAG
                         num of seconds slave can lag behind (default: 0)
   --execute             make changes if enabled (default: False)
-
