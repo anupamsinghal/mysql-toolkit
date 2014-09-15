@@ -10,6 +10,7 @@
 Repeatedly runs a sql query until no rows get modified.
 Indicates a time estimate using target param.
 Makes sure slaves don't lag too behind.
+    [pt-archiver](http://www.percona.com/doc/percona-toolkit/2.1/pt-archiver.html) could be used for the deletion functinoality, but it doesn't figure out the slave and track lag automatically, you need to specify the slaves manually, unlike pt-online-schema-changes (http://www.percona.com/doc/percona-toolkit/2.1/pt-online-schema-change.html), a truly awesome tool.
 
 #### Parameters:
 
