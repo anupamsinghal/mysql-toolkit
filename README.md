@@ -1,7 +1,5 @@
 # MySql utilities
 
----
-
 ### update-until ###
 
 #### Requires:
@@ -15,6 +13,7 @@ Makes sure slaves don't lag too behind.
 
 #### Parameters:
 
+```
 ./update-until.py -h
 Usage: update-until.py [options]
 
@@ -42,3 +41,4 @@ Options:
   --slave_lag=SLAVE_LAG
                         num of seconds slave can lag behind (default: 0)
   --execute             make changes if enabled (default: False)
+```
