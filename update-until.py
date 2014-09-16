@@ -3,10 +3,9 @@
 # Runs an update query on the specified database while rows are getting changed.
 #
 # CHANGELOG
+#   computes target rows to estimate time
 #   added total elapsed time after each tick
-#   added sleep time
 #   added total rows modified
-#   added time estimate using target param
 #   makes sure slaves don't lag too behind
 
 import sys
@@ -24,21 +23,20 @@ def parse_args():
    p.add_option("-f", "--logfile", dest="logfile", help="log to file with this name")
    p.add_option("--host", dest="host", help="host to send requests to (default: %default)")
    p.add_option("-P", "--port", dest="port", help="port of host to send requests to (default: %default)")
-   p.add_option("--db", dest="db", help="name of database (default: %default)")
+   p.add_option("-D", "--db", dest="db", help="name of database (default: %default)")
    p.add_option("-u", "--user", dest="user", help="database user (default: %default)")
    p.add_option("-p", "--password", dest="password", help="database password")
    p.add_option("-q", "--query", dest="query", help="query to run")
-   p.add_option("-t", "--target", dest="target", help="row count target to estimate time remaining (default: %default)")
+   p.add_option("-e", "--estimate", dest="estimate", help="query to use to estimate time remaining by first computing total rows to compute.  If not set, estimate will not be provided.")
    p.add_option("-s", "--sleep_ms", dest="sleep_ms", help="num of milliseconds to sleep betweeen queries (default: %default)")
    p.add_option("--slave_lag", dest="slave_lag", help="num of seconds slave can lag behind (default: %default)")
    p.add_option("--execute", action="store_true", dest="execute", help="make changes if enabled (default: %default)")
 
    # set defaults
    p.set_defaults(loglevel="info", user="percona", password="toolkit", host="localhost",  \
-      port=3306, db="nitro_staging", target=0, sleep_ms = 2000, slave_lag = 0, execute = False)
+      port=3306, db="nitro_staging", sleep_ms = 2000, slave_lag = 0, execute = False, estimate = False)
    (opts, args) = p.parse_args()
    opts.port = int(opts.port)
-   opts.target = int(opts.target)
    opts.slave_lag = int(opts.slave_lag)
    opts.sleep_ms = int(opts.sleep_ms)  
    #trace ("opts: " +  str(opts))
@@ -79,15 +77,16 @@ def main():
    # start profile
    start = time.time()
 
-   estimate = False
-   if opts.target >= 0:
-      estimate = True
-
    # initialize
    conn = sql_connect(opts.host, opts.db, opts.port, opts.user, opts.password, autocommit = opts.execute)
-   counter = total_rows = total_elapsed = 0
+   counter = total_rows = total_elapsed = target_rows = 0
 
    check_lag(conn, opts)
+
+   if opts.estimate:
+      # compute target
+      target_rows = sql_query(conn.cursor(), opts.estimate, singleColumnAndRow = True)
+      trace("Rows to process = %s" % number_format(target_rows))
 
    # query until done
    while True:
@@ -102,8 +101,8 @@ def main():
       trace("%d. %s rows (%s total) in %s (%s total) - overall %s" % \
           (counter, number_format(num_rows), number_format(total_rows), get_elapsed_time(elapsed), \
             get_elapsed_time(total_elapsed), get_elapsed_time(net_elapsed)), False)
-      if estimate:
-         rows_left = opts.target - total_rows;
+      if opts.estimate:
+         rows_left = target_rows - total_rows;
          time_left = int((time.time() - start) / total_rows * rows_left)
          if rows_left > 0 and time_left > 0:            
             trace(", time remaining: %s" % (get_elapsed_time(time_left)))

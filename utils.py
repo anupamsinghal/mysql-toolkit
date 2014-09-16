@@ -114,7 +114,7 @@ def sql_connect(host, db, port=3306, user='mainbun', password='l1festream', auto
    conn = mysql.connect(host=host, db=db, user=user, passwd=password, port=port, autocommit = autocommit)
    return conn
 
-def sql_query(cursor, query, modify = False, output = False, fetchOne = False, fetchAll = True):
+def sql_query(cursor, query, modify = False, output = False, fetchOne = False, fetchAll = True, singleColumnAndRow = False):
    """
    Queries a SQL connection and returns the resultset.
    """
@@ -140,6 +140,8 @@ def sql_query(cursor, query, modify = False, output = False, fetchOne = False, f
       row = dict()
       for j in range(len(cursor.description)):
          if output: trace(str(cursor.description[j][0]) + "=" + str(ret[i][j]), newline=False)
+         if singleColumnAndRow:
+            return ret[i][j]
          row[str(cursor.description[j][0])] = ret[i][j]
          if j < len(cursor.description) - 1:
             if output: trace(", ", newline=False)
