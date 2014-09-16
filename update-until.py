@@ -30,11 +30,14 @@ def parse_args():
    p.add_option("-e", "--estimate", dest="estimate", help="query to use to estimate time remaining by first computing total rows to compute.  If not set, estimate will not be provided.")
    p.add_option("-s", "--sleep_ms", dest="sleep_ms", help="num of milliseconds to sleep betweeen queries (default: %default)")
    p.add_option("--slave_lag", dest="slave_lag", help="num of seconds slave can lag behind (default: %default)")
-   p.add_option("--execute", action="store_true", dest="execute", help="make changes if enabled (default: %default)")
+   p.add_option("--modify", action="store_true", dest="modify", help="applies for change queries only. makes changes if enabled (default: %default)")
+   p.add_option("--simulate", action="store_true", dest="simulate", help="applies for change queries only. act like changes are being made but don't make any (default: %default)")
+   p.add_option("--no_fks", action="store_true", dest="fks", help="disable foreign keys (default: %default)")
+
 
    # set defaults
    p.set_defaults(loglevel="info", user="percona", password="toolkit", host="localhost",  \
-      port=3306, db="nitro_staging", sleep_ms = 2000, slave_lag = 0, execute = False, estimate = False)
+      port=3306, db="nitro_staging", sleep_ms = 2000, slave_lag = 0, modify = False, estimate = False, fks = False, simulate = False)
    (opts, args) = p.parse_args()
    opts.port = int(opts.port)
    opts.slave_lag = int(opts.slave_lag)
@@ -78,7 +81,7 @@ def main():
    start = time.time()
 
    # initialize
-   conn = sql_connect(opts.host, opts.db, opts.port, opts.user, opts.password, autocommit = opts.execute)
+   conn = sql_connect(opts.host, opts.db, opts.port, opts.user, opts.password)
    counter = total_rows = total_elapsed = target_rows = 0
 
    check_lag(conn, opts)
@@ -93,7 +96,7 @@ def main():
 
       local_start = time.time()
       counter += 1
-      num_rows = sql_query(conn.cursor(), opts.query, modify = True)
+      num_rows = sql_query(conn.cursor(), opts.query, modify = opts.modify, simulate = opts.simulate, disable_fks = opts.fks)
       total_rows += num_rows
       elapsed = int(time.time() - local_start)
       total_elapsed += elapsed
