@@ -114,7 +114,8 @@ def sql_connect(host, db, port=3306, user='mainbun', password='l1festream', auto
    conn = mysql.connect(host=host, db=db, user=user, passwd=password, port=port, autocommit = autocommit)
    return conn
 
-def sql_query(cursor, query, modify = False, simulate = False, output = False, fetchOne = False, fetchAll = True, singleColumnAndRow = False, disable_fks = False):
+def sql_query(cursor, query, modify = False, simulate = False, output = False, fetchOne = False, \
+   fetchAll = True, singleColumnAndRow = False, disable_fks = False):
    """
    Queries a SQL connection and returns the resultset.
    """

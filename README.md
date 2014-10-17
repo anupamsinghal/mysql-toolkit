@@ -1,10 +1,47 @@
 # MySql utilities
 
-### update-until ###
+## Utilities ##
+* update-until
+* rename-db
 
-#### Requires:
+## Pre-requisites:
 * python 2.7+
 * [mysql python connector](http://dev.mysql.com/downloads/connector/python/1.2.html)
+
+
+### rename-db ###
+
+#### Features
+1) Renames a database to a new name, with some error checks.
+2) Aborts on triggers by default.  Can delete them with the --drop-triggers flag.
+3) Note: views are ignored and not handled at all.
+
+#### Parameters:
+```
+Usage: rename-db.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -l LOGLEVEL, --log=LOGLEVEL
+                        set log level to any of: debug, info, warn, error,
+                        critical (default: info)
+  -f LOGFILE, --logfile=LOGFILE
+                        log to file with this name
+  --host=HOST           host to send requests to (default: localhost)
+  -P PORT, --port=PORT  port of host to send requests to (default: 3306)
+  -u USER, --user=USER  database user (default: percona)
+  -p PASSWORD, --password=PASSWORD
+                        database password
+  --old=OLDDB           name of old database (default: nitro_staging)
+  --new=NEWDB           name of new database (default: DELETE_nitro_staging
+  --modify              if false, outputs queries. if true, runs them
+                        (default: False)
+  --drop-triggers       if true, drop triggers. if false, abort (default:
+                        False)
+```
+
+
+### update-until ###
 
 #### Features
 1) Repeatedly runs a sql query until no rows get modified.
