@@ -12,9 +12,9 @@
 ### rename-db ###
 
 #### Features
-1) Renames a database to a new name, with some error checks.
-2) Aborts on triggers by default.  Can delete them with the --drop-triggers flag.
-3) Note: views are ignored and not handled at all.
+1. Renames a database to a new name, with some error checks.
+1. Aborts on triggers by default.  Can delete them with the --drop-triggers flag.
+1. Note: views are ignored and not handled at all.
 
 #### Parameters:
 ```
@@ -44,10 +44,12 @@ Options:
 ### update-until ###
 
 #### Features
-1) Repeatedly runs a sql query until no rows get modified.
-2) Indicates a time estimate if estimate query is specified.
-3) Makes sure slaves don't lag too behind.
-    [pt-archiver](http://www.percona.com/doc/percona-toolkit/2.1/pt-archiver.html) could be used for the deletion functionality, but it doesn't figure out the replication slaves and track lag automatically (like pt-online-schema-changes (http://www.percona.com/doc/percona-toolkit/2.1/pt-online-schema-change.html), a truly awesome tool).
+1. Repeatedly runs a sql query until no rows get modified.
+1. Indicates a time estimate if estimate query is specified.
+1. Makes sure slaves don't lag too behind.
+
+#### Notes
+[pt-archiver](http://www.percona.com/doc/percona-toolkit/2.1/pt-archiver.html) could be used for the deletion functionality, but it doesn't figure out the replication slaves and track lag automatically (like pt-online-schema-changes (http://www.percona.com/doc/percona-toolkit/2.1/pt-online-schema-change.html), a truly awesome tool).
 
 #### Parameters:
 
